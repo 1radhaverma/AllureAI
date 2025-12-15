@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace AllureAI_BACKEND.Controllers
+namespace AllureAI_BACKEND.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
