@@ -7,7 +7,7 @@ namespace AllureAi_API.Domain.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public int ID { get; set; }
+        public string ID { get; set; }
 
         [BsonElement("Name")]
         public string ProductName { get; set; }
