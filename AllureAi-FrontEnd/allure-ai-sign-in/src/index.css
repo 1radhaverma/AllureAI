@@ -1,0 +1,196 @@
+@import url('https://fonts.googleapis.com/css2?family=Italiana&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Jost:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Allure AI — Design System
+   Two themes: Luna (men, deep teals/blues) and Moon (women, purples/magenta)
+   All colors MUST be HSL.
+*/
+
+@layer base {
+  :root,
+  .luna {
+    /* LUNA — masculine, deep teal & midnight blue */
+    --background: 200 45% 6%;
+    --foreground: 190 30% 92%;
+
+    --card: 200 40% 9%;
+    --card-foreground: 190 30% 92%;
+
+    --popover: 200 45% 8%;
+    --popover-foreground: 190 30% 92%;
+
+    --primary: 184 70% 55%;
+    --primary-foreground: 200 50% 6%;
+
+    --secondary: 200 35% 14%;
+    --secondary-foreground: 190 30% 92%;
+
+    --muted: 200 30% 14%;
+    --muted-foreground: 195 20% 65%;
+
+    --accent: 184 80% 45%;
+    --accent-foreground: 200 50% 6%;
+
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 200 30% 18%;
+    --input: 200 30% 14%;
+    --ring: 184 70% 55%;
+
+    --radius: 1rem;
+
+    /* Brand */
+    --brand-1: 200 80% 18%;
+    --brand-2: 195 70% 30%;
+    --brand-3: 184 75% 55%;
+    --glow: 184 90% 60%;
+
+    /* Composed tokens */
+    --gradient-bg: radial-gradient(ellipse at top left, hsl(195 70% 22% / 0.9), transparent 60%),
+                   radial-gradient(ellipse at bottom right, hsl(184 80% 30% / 0.6), transparent 55%),
+                   linear-gradient(135deg, hsl(200 60% 8%), hsl(195 50% 12%));
+    --gradient-side: linear-gradient(160deg, hsl(200 80% 14%) 0%, hsl(195 70% 22%) 50%, hsl(184 65% 30%) 100%);
+    --gradient-brand: linear-gradient(135deg, hsl(184 80% 55%), hsl(195 80% 65%));
+    --shadow-elev: 0 30px 80px -20px hsl(184 90% 30% / 0.45), 0 10px 30px -10px hsl(200 80% 5% / 0.7);
+    --shadow-glow: 0 0 60px hsl(184 90% 60% / 0.35);
+    --shadow-3d: 20px 20px 60px hsl(200 80% 4% / 0.7), -10px -10px 40px hsl(195 70% 18% / 0.5);
+  }
+
+  .moon {
+    /* MOON — feminine, purple & magenta */
+    --background: 285 45% 7%;
+    --foreground: 320 30% 95%;
+
+    --card: 285 40% 10%;
+    --card-foreground: 320 30% 95%;
+
+    --popover: 285 45% 9%;
+    --popover-foreground: 320 30% 95%;
+
+    --primary: 312 85% 65%;
+    --primary-foreground: 285 50% 8%;
+
+    --secondary: 285 35% 16%;
+    --secondary-foreground: 320 30% 95%;
+
+    --muted: 285 30% 15%;
+    --muted-foreground: 305 20% 70%;
+
+    --accent: 312 90% 60%;
+    --accent-foreground: 285 50% 8%;
+
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 285 30% 20%;
+    --input: 285 30% 15%;
+    --ring: 312 85% 65%;
+
+    --radius: 1rem;
+
+    --brand-1: 280 70% 22%;
+    --brand-2: 300 70% 38%;
+    --brand-3: 312 85% 65%;
+    --glow: 320 95% 70%;
+
+    --gradient-bg: radial-gradient(ellipse at top right, hsl(312 80% 30% / 0.85), transparent 60%),
+                   radial-gradient(ellipse at bottom left, hsl(280 70% 28% / 0.7), transparent 55%),
+                   linear-gradient(135deg, hsl(285 60% 9%), hsl(300 50% 14%));
+    --gradient-side: linear-gradient(200deg, hsl(285 70% 18%) 0%, hsl(300 75% 30%) 50%, hsl(320 85% 55%) 100%);
+    --gradient-brand: linear-gradient(135deg, hsl(312 90% 65%), hsl(280 80% 70%));
+    --shadow-elev: 0 30px 80px -20px hsl(312 90% 40% / 0.45), 0 10px 30px -10px hsl(285 80% 5% / 0.7);
+    --shadow-glow: 0 0 60px hsl(320 95% 70% / 0.4);
+    --shadow-3d: 20px 20px 60px hsl(285 80% 4% / 0.7), -10px -10px 40px hsl(300 70% 22% / 0.5);
+  }
+
+  /* Sidebar (kept for shadcn compat) */
+  :root {
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html, body, #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Jost', system-ui, sans-serif;
+    background: var(--gradient-bg);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+  }
+  .font-display {
+    font-family: 'Italiana', 'Cormorant Garamond', serif;
+    letter-spacing: 0.02em;
+  }
+  .font-serif-soft {
+    font-family: 'Cormorant Garamond', serif;
+  }
+}
+
+@layer utilities {
+  .gradient-side { background: var(--gradient-side); }
+  .gradient-brand { background: var(--gradient-brand); }
+  .shadow-elev { box-shadow: var(--shadow-elev); }
+  .shadow-glow { box-shadow: var(--shadow-glow); }
+  .shadow-3d { box-shadow: var(--shadow-3d); }
+  .text-balance { text-wrap: balance; }
+
+  .glass {
+    background: hsl(var(--card) / 0.55);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    border: 1px solid hsl(var(--border) / 0.7);
+  }
+
+  .perspective-scene { perspective: 1600px; perspective-origin: 50% 40%; }
+  .preserve-3d { transform-style: preserve-3d; }
+
+  .tilt-left {
+    transform: rotateY(14deg) rotateX(2deg) translateZ(0);
+    transform-origin: right center;
+  }
+  .tilt-right {
+    transform: rotateY(-14deg) rotateX(2deg) translateZ(0);
+    transform-origin: left center;
+  }
+
+  .float-slow { animation: float 8s ease-in-out infinite; }
+  .float-slower { animation: float 11s ease-in-out infinite; }
+  .pulse-ring { animation: pulseRing 3s ease-in-out infinite; }
+  .shimmer-text {
+    background: linear-gradient(90deg, hsl(var(--foreground)) 0%, hsl(var(--primary)) 50%, hsl(var(--foreground)) 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer 6s linear infinite;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotateZ(0); }
+  50% { transform: translateY(-14px) rotateZ(0.5deg); }
+}
+@keyframes pulseRing {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4); }
+  50% { box-shadow: 0 0 0 18px hsl(var(--primary) / 0); }
+}
+@keyframes shimmer {
+  to { background-position: 200% center; }
+}
