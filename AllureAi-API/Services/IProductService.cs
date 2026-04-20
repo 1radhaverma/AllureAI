@@ -4,10 +4,10 @@ namespace AllureAi_API.Services
 {
     public interface IProductService
     {
-        Task<ProductDto?> GetProductByIdAsync(string id);
+        Task<ProductDto> CreateProductAsync(CreateProductDto dto);
         Task<IEnumerable<ProductDto>> GetAllProductsAsync();
-        Task<ProductDto> CreateProductAsync(CreateProductDto createProductDto);
-        Task<ProductDto> UpdateProductAsync(string id, UpdateProductDto updateProductDto);
+        Task<ProductDto?> GetProductByIdAsync(string id);
+        Task<ProductDto> UpdateProductAsync(string id, UpdateProductDto dto);
         Task<bool> DeleteProductAsync(string id);
     }
 }

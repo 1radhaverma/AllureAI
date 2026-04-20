@@ -5,18 +5,10 @@ namespace AllureAi_API.Domain.Models
 {
     public class Product
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string ID { get; set; }
-
-        [BsonElement("Name")]
+       
+        public int ID { get; set; }
         public string ProductName { get; set; }
-
-        [BsonElement("Description")]
         public string Description { get; set; }
-
-        [BsonElement("Price")]
-        public string Price { get; set; }
-
+        public decimal Price { get; set; }
     }
 }
