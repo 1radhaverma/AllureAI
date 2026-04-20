@@ -24,34 +24,57 @@ export const AuthShell = ({ mode }: Props) => {
   const isSignup = mode === "signup";
 
   const onSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      if (isSignup) {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/`,
-            data: { full_name: name },
-          },
-        });
-        if (error) throw error;
-        toast.success("Welcome to Allure AI ✦ check your inbox to verify.");
-        navigate("/");
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        toast.success("Welcome back.");
-        navigate("/");
-      }
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Something went wrong";
-      toast.error(msg);
-    } finally {
-      setLoading(false);
+  e.preventDefault();
+  setLoading(true);
+
+  // ✅ Backend connection test
+  try {
+    const response = await fetch("http://localhost:5071/api/health");
+
+    if (!response.ok) {
+      throw new Error(`Backend error: ${response.status}`);
     }
-  };
+
+    const productData = await response.json();
+    console.log("CONNECTED ✅ Frontend + Backend", productData);
+  } catch (error) {
+    console.error("ERROR ❌ Backend not connected", error);
+  }
+
+  // ✅ Existing Supabase login/signup logic
+  try {
+    if (isSignup) {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: { full_name: name },
+        },
+      });
+
+      if (error) throw error;
+
+      toast.success("Welcome to Allure AI ✦ check your inbox to verify.");
+      navigate("/");
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      toast.success("Welcome back.");
+      navigate("/");
+    }
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Something went wrong";
+    toast.error(msg);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen flex flex-col">

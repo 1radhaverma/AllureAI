@@ -22,6 +22,23 @@ const Index = () => {
     return () => sub.subscription.unsubscribe();
   }, []);
 
+// ✅ BACKEND CONNECTION TEST (ADD THIS)
+  useEffect(() => {
+    fetch("https://localhost:7229/api/Product")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Backend error: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log("CONNECTED ✅ Frontend + Backend", data);
+      })
+      .catch((err) => {
+        console.error("ERROR ❌ Backend not connected", err);
+      });
+  }, []);
+  
   const signOut = async () => {
     await supabase.auth.signOut();
     toast.success("Signed out");
