@@ -1,26 +1,19 @@
 ﻿using AllureAi_API.Domain.Contracts;
 using AllureAi_API.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using System.Collections.Generic;
 
 namespace AllureAi_API.Data
 {
-    public class AppDbContext
+    public class AppDbContext : DbContext
     {
-        public IMongoCollection<Product> ProductCollection { get; }
-
-        public AppDbContext(IOptions<MongoDBSettings> settings)
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            // This is given us connection string 
-            MongoClient client = new MongoClient(settings.Value.ConnectionURI);
-
-            // Connecting to the database name 
-            IMongoDatabase database = client.GetDatabase(settings.Value.DatabaseName);
-
-
-            // Connecting to the collection name 
-            ProductCollection = database.GetCollection<Product>(settings.Value.CollectionName);
-
         }
+
+        public DbSet<User> Users { get; set; }
+        public DbSet<Product> Products { get; set; }
     }
 }

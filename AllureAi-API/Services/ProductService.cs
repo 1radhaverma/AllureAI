@@ -1,13 +1,12 @@
 ﻿using AllureAi_API.Data;
 using AllureAi_API.Domain.Contracts;
 using AllureAi_API.Domain.Models;
-using MongoDB.Driver;
+using Microsoft.EntityFrameworkCore;
 
 namespace AllureAi_API.Services
 {
     public class ProductService : IProductService
     {
-
         private readonly AppDbContext _context;
 
         public ProductService(AppDbContext context)
@@ -15,147 +14,78 @@ namespace AllureAi_API.Services
             _context = context;
         }
 
-        public async Task<ProductDto> CreateProductAsync(CreateProductDto createProductDto)
+        public async Task<ProductDto> CreateProductAsync(CreateProductDto dto)
         {
-            ValidateCreateDto(createProductDto);
-
-            var prodcut = new Product
+            var product = new Product
             {
-                ProductName = createProductDto.Name,
-                Description = createProductDto.Description,
-                Price = createProductDto.Price,
+                ProductName = dto.Name,
+                Description = dto.Description,
+                Price = decimal.Parse(dto.Price) // Convert decimal to string for storage
             };
 
-            try
-            {
-                await _context.ProductCollection.InsertOneAsync(prodcut);
-                return MapToDto(prodcut);
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
 
-            }
-            catch (Exception ex)
-            {
-                throw new MongoException($"Failed to create product : {ex.Message}");
-            }
-
+            return MapToDto(product);
         }
 
         public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
         {
-            try
-            {
-                var products = await _context.ProductCollection.Find(Builders<Product>.Filter.Empty)
-                    .ToListAsync();
-                return products.Select(MapToDto);
-
-            }
-            catch (Exception ex)
-            {
-                throw new MongoException($"Failed to  retrieve product {ex.Message}");
-            }
+            var products = await _context.Products.ToListAsync();
+            return products.Select(MapToDto);
         }
 
         public async Task<ProductDto?> GetProductByIdAsync(string id)
         {
-            ValidateObjectId(id);
+            int productId = int.Parse(id);
 
-            try
-            {
-                var filter = Builders<Product>.Filter.Eq(p => p.ID, id);
-                var product = await _context.ProductCollection.Find(filter).FirstOrDefaultAsync()
-                    ?? throw new MongoException($"Product with {id} not found");
-                return MapToDto(product);
+            var product = await _context.Products.FindAsync(productId);
 
-            }
-            catch (Exception ex) when (ex is not MongoException)
-            {
-                throw new MongoException($"Database error {ex.Message}");
-            }
+            if (product == null)
+                throw new Exception("Product not found");
+
+            return MapToDto(product);
         }
 
-        public async Task<ProductDto> UpdateProductAsync(string id, UpdateProductDto updateProductDto)
+        public async Task<ProductDto> UpdateProductAsync(string id, UpdateProductDto dto)
         {
-            ValidateObjectId(id);
-            ValidateUpdateDto(updateProductDto);
+            int productId = int.Parse(id);
 
-            try
-            {
-                var update = Builders<Product>.Update
-                    .Set(p => p.ProductName, updateProductDto.Name)
-                    .Set(p => p.Description, updateProductDto.Description)
-                    .Set(p => p.Price, updateProductDto.Price);
+            var product = await _context.Products.FindAsync(productId);
 
-                var product = await _context.ProductCollection.FindOneAndUpdateAsync(
-                    Builders<Product>.Filter.Eq(p => p.ID, id),
-                    update,
-                    new FindOneAndUpdateOptions<Product> { ReturnDocument = ReturnDocument.After }
-                ) ?? throw new MongoException($"Product with ID {id} not found");
+            if (product == null)
+                throw new Exception("Product not found");
 
-                return MapToDto(product);
-            }
-            catch (Exception ex) when (ex is not MongoException)
-            {
-                throw new MongoException($"Failed to update product: {ex.Message}");
-            }
+            product.ProductName = dto.Name;
+            product.Description = dto.Description;
+            product.Price = decimal.Parse(dto.Price);
+
+            await _context.SaveChangesAsync();
+
+            return MapToDto(product);
         }
-
 
         public async Task<bool> DeleteProductAsync(string id)
         {
-            ValidateObjectId(id);
+            int productId = int.Parse(id);
 
-            try
-            {
-                var result = await _context.ProductCollection.DeleteOneAsync(p => p.ID == id);
-                if (result.DeletedCount == 0)
-                    throw new MongoException($"Product with ID {id} not found");
+            var product = await _context.Products.FindAsync(productId);
 
-                return true;
-            }
-            catch (Exception ex) when (ex is not MongoException)
-            {
-                throw new MongoException($"Failed to delete product: {ex.Message}");
-            }
+            if (product == null)
+                throw new Exception("Product not found");
+
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
-
-        // Validate id 
-        private static void ValidateObjectId(string id)
-        {
-            if (string.IsNullOrWhiteSpace(id))
-                throw new MongoException("Product ID cannot be empty");
-            if (!MongoDB.Bson.ObjectId.TryParse(id, out _))
-                throw new MongoException("Invalid MongoDB ObjectId format");
-        }
-
-        // Validate create dto 
-        private static void ValidateCreateDto(CreateProductDto dto)
-        {
-            if (dto == null)
-                throw new MongoException("Product data is required");
-
-            if (string.IsNullOrEmpty(dto.Name))
-                throw new MongoException("Product name is required");
-        }
-
-
-        // Validate udpate dto 
-
-        private static void ValidateUpdateDto(UpdateProductDto dto)
-        {
-            if (dto == null)
-                throw new MongoException("Update data is required");
-
-            if (string.IsNullOrEmpty(dto.Name))
-                throw new MongoException("Product name is required");
-        }
-
-        // map everything to dto 
 
         private static ProductDto MapToDto(Product product) => new()
         {
-            id = product.ID,
+            id = product.ID.ToString(),
             Name = product.ProductName,
             Description = product.Description,
-            Price = product.Price
+            Price = product.Price.ToString()
         };
     }
 }
